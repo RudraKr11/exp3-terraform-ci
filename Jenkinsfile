@@ -41,7 +41,7 @@ pipeline {
 
         stage('Security Scan') {
             steps {
-                sh 'tfsec .' || true'
+                sh 'tfsec . || true'
             }
         }
 
