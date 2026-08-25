@@ -29,20 +29,19 @@ resource "aws_security_group" "web" {
   description = "Security group managed by Terraform for Experiment 3"
   vpc_id      = data.aws_vpc.default.id
 
-  # INTENTIONALLY INSECURE FOR THE SECURITY-SCAN DEMONSTRATION
   ingress {
-    description = "SSH - intentionally public for tfsec demonstration"
+    description = "SSH from selected subnet"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["172.31.32.0/20"]
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.0.0/16"]
   }
 
   tags = {
@@ -61,6 +60,17 @@ resource "aws_instance" "web" {
   vpc_security_group_ids = [
     aws_security_group.web.id
   ]
+
+  # Require IMDSv2 tokens
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  # Encrypt the root EBS volume
+  root_block_device {
+    encrypted = true
+  }
 
   tags = {
     Name       = "exp3-ci-web"
