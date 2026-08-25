@@ -1,4 +1,14 @@
-output "bucket_name" {
-  description = "Name of the S3 bucket created by Terraform"
-  value       = aws_s3_bucket.ci_demo.bucket
+output "instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.web.id
+}
+
+output "instance_public_ip" {
+  description = "Public IP address of the EC2 instance"
+  value       = aws_instance.web.public_ip
+}
+
+output "security_group_id" {
+  description = "ID of the Terraform-managed security group"
+  value       = aws_security_group.web.id
 }
